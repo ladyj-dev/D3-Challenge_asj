@@ -1,4 +1,4 @@
-.aText {
+.axisText {
   font-family: sans-serif;
   font-size: 16px;
   text-anchor: middle;
@@ -58,13 +58,13 @@
     display: none;
   }
 
-  .aText {
+  .axisText {
     font-size: 14px;
   }
 }
 
 @media screen and (max-width: 400px) {
-  .aText {
+  .axisText {
     font-size: 13px;
   }
 }
