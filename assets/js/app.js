@@ -27,27 +27,31 @@ var svg = d3
 
 var chartGroup = svg
   .append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`);
+  .attr("transform", `translate(${margin.left}, ${margin.top})`)
+  .attr("class", "chart");
 
 // Step 3:
 // Import data from the donuts.csv file
 // use + to indicate that poverty and healthcare are numbers
 // =================================
 d3.csv("assets/data.csv").then(function (data) {
-  data.poverty = +data.poverty;
-  data.healthcare = +data.healthcare;
-  console.log(data);
+    console.log(data);
+
+    data.forEach(function(data) {
+    data.age = +data.age;
+    data.healthcare = +data.healthcare;
+  });
 
   // Step 5: Create the scales for the chart
   // =================================
   var xLinearScale = d3
     .scaleLinear()
-    .domain([20, d3.max(data, (d) => d.poverty)])
+    .domain(d3.extent(data, (d) => d.age))
     .range([0, width]);
   // // Step 6: Set up the y-axis domain
   var yLinearScale = d3
     .scaleLinear()
-    .domain([0, d3.max(data, (d) => d.healthcare)])
+    .domain(d3.extent(data, (d) => d.healthcare))
     .range([height, 0]);
 
   // create axes
@@ -61,24 +65,49 @@ d3.csv("assets/data.csv").then(function (data) {
     .call(bottomAxis);
 
   chartGroup.append("g").call(leftAxis);
+  // create axis labels
+  chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left + 40)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .attr("class", "axisText")
+    .text("Healthcare");
 
+   chartGroup.append("text")
+    .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
+    .attr("class", "axisText")
+    .text("Age"); 
   // create circles (use class from css'state circle')
   var circlesGroup = chartGroup
     .selectAll("circle")
     .data(data)
     .enter()
     .append("circle")
-    .attr("cx", (d) => xLinearScale(d.poverty))
+    .attr("cx", (d) => xLinearScale(d.age))
     .attr("cy", (d) => yLinearScale(d.healthcare))
     .attr("r", "15")
     .attr("class", "stateCircle");
+  
+  var textGroup = chartGroup
+    .append("g")
+    .selectAll("text")
+    .data(data)
+    .enter()
+    .append("text")
+    .attr("x", (d) => xLinearScale(d.age)-0.5)
+    .attr("y", (d) => yLinearScale(d.healthcare)+5)
+    .attr("class", "stateText")
+    .html(function (d){
+      return `${d.abbr}`
+    });
   // using version 9 of d3 tips (html) d3 tips class in css
   // step 10 intialize tool tip
   var toolTip = d3
     .tip()
     .attr("class", "d3-tip")
     .html(function (d) {
-      return `${d.state}<br>Poverty: ${d.poverty}<br> Without Healthcare: ${d.healthcare}`;
+      return `${d.state}<br>Age: ${d.age}<br> Without Healthcare: ${d.healthcare}`;
     });
   // step 11 create tooltip chart; append
   chartGroup.call(toolTip);
@@ -92,22 +121,6 @@ d3.csv("assets/data.csv").then(function (data) {
     .on("mouseout", function (data, index) {
       toolTip.hide(data);
       // step 12 create axes labels
-      chartGroup
-        .append("text")
-        .attr(
-          "transform",
-          `translate(${width / 2}, ${height + margin.top + 30})`
-        )
-        .attr("class", "axisText")
-        .text("In Poverty (%)");
-      // left axis
-      chartGroup
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 0 - margin.left + 40)
-        .attr("x", 0 - height / 2)
-        .attr("dy", "1em")
-        .attr("class", "axisText")
-        .text("Without Access to Healthcare (%)");
+      
     });
 });
