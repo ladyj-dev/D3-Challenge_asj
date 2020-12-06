@@ -72,7 +72,7 @@ d3.csv("assets/data.csv").then(function (data) {
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("class", "axisText")
-    .text("Healthcare");
+    .text("% Without Healthcare");
 
    chartGroup.append("text")
     .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
