@@ -58,7 +58,7 @@ d3.csv("assets/data.csv").then(function (data) {
   var bottomAxis = d3.axisBottom(xLinearScale);
   var leftAxis = d3.axisLeft(yLinearScale);
 
-  //   append axex to chartgroup
+  //   append axis to chartgroup
   chartGroup
     .append("g")
     .attr("transform", `translate(0, ${height})`)
